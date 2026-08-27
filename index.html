@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book Catalog · Portfolio</title>
+  <!-- Google Font & clean reset -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(145deg, #f0f4fa 0%, #e6ecf5 100%);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 2rem 1.5rem;
+      margin: 0;
+      color: #1a2639;
+      line-height: 1.5;
+    }
+
+    .catalog-card {
+      max-width: 1100px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      background: #ffffff;
+      border-radius: 44px;
+      padding: 2.5rem 2.2rem;
+      box-shadow: 0 24px 48px -16px rgba(0, 20, 40, 0.25),
+                  0 6px 16px -6px rgba(0, 0, 0, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      transition: all 0.2s;
+    }
+
+    @media (max-width: 640px) {
+      .catalog-card {
+        padding: 1.5rem 0.8rem;
+        border-radius: 32px;
+      }
+    }
+
+    /* header / caption style */
+    .table-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 0.8rem 1.5rem;
+      margin-bottom: 1.8rem;
+      border-bottom: 2px solid rgba(44, 62, 80, 0.06);
+      padding-bottom: 0.8rem;
+    }
+
+    .table-header h2 {
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #1e3c5e, #2b5a7a);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .table-header h2::before {
+      content: "📚";
+      -webkit-text-fill-color: initial;
+      background: none;
+      font-size: 2rem;
+    }
+
+    .table-header .book-badge {
+      background: #eef4fa;
+      padding: 0.4rem 1.2rem;
+      border-radius: 60px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #1f3a57;
+      border: 1px solid #d3e0ed;
+      box-shadow: inset 0 1px 2px white;
+    }
+
+    /* table wrapper for overflow */
+    .table-wrap {
+      overflow-x: auto;
+      border-radius: 28px;
+      background: #f9fcff;
+      padding: 0.2rem 0.2rem 0.2rem 0.2rem;
+      box-shadow: inset 0 1px 4px rgba(0,0,0,0.02);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+      border-spacing: 0;
+      background: transparent;
+      border-radius: 28px;
+      overflow: hidden;
+    }
+
+    caption {
+      caption-side: top;
+      text-align: left;
+      font-weight: 600;
+      font-size: 1.3rem;
+      color: #1f3a57;
+      padding: 0.5rem 0 0.2rem 0.4rem;
+      background: transparent;
+      letter-spacing: -0.01em;
+      display: none; /* hidden because we use custom header */
+    }
+
+    thead th {
+      background: #1f3a57;
+      color: white;
+      font-weight: 600;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 1rem 1.2rem;
+      text-align: left;
+      border: none;
+      position: sticky;
+      top: 0;
+      z-index: 5;
+    }
+
+    thead th:first-child {
+      border-top-left-radius: 20px;
+    }
+    thead th:last-child {
+      border-top-right-radius: 20px;
+    }
+
+    tbody tr {
+      background: white;
+      transition: background 0.15s ease, transform 0.1s;
+      border-bottom: 1px solid #eef3f8;
+    }
+
+    tbody tr:last-child {
+      border-bottom: none;
+    }
+
+    tbody tr:hover {
+      background: #e9f0fa;
+      cursor: default;
+    }
+
+    tbody td {
+      padding: 1rem 1.2rem;
+      color: #1f334a;
+      font-weight: 450;
+      border: none;
+      vertical-align: middle;
+    }
+
+    tbody td:first-child {
+      font-weight: 600;
+      color: #143049;
+    }
+
+    tfoot td {
+      background: #eef4fa;
+      padding: 0.9rem 1.2rem;
+      font-weight: 600;
+      color: #1f3a57;
+      border-top: 2px solid #d3e0ed;
+      border-bottom-left-radius: 20px;
+      border-bottom-right-radius: 20px;
+      font-size: 0.95rem;
+      letter-spacing: 0.01em;
+    }
+
+    tfoot td span {
+      background: #1f3a57;
+      color: white;
+      padding: 0.2rem 0.9rem;
+      border-radius: 40px;
+      font-size: 0.8rem;
+      margin-left: 0.6rem;
+      font-weight: 600;
+    }
+
+    /* genre badges */
+    .genre-badge {
+      display: inline-block;
+      background: #e2eaf5;
+      padding: 0.2rem 0.9rem;
+      border-radius: 40px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: capitalize;
+      color: #1f3a57;
+      letter-spacing: 0.02em;
+      border: 1px solid rgba(31, 58, 87, 0.08);
+    }
+
+    .genre-fantasy { background: #d5e3f5; color: #1d3a5e; }
+    .genre-fiction { background: #d9eaf0; color: #1a4a5a; }
+    .genre-romance { background: #f5e3e8; color: #7a3d4a; }
+
+    .year-cell {
+      font-feature-settings: "tnum";
+      font-weight: 500;
+      color: #2b4b6a;
+    }
+
+    /* interactive row highlight via js */
+    .row-highlight {
+      background: #d7e6f8 !important;
+      box-shadow: inset 0 0 0 1px #aac0db;
+    }
+
+    .row-highlight td {
+      color: #0f2a44;
+    }
+
+    .table-footer-extra {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-top: 1.2rem;
+      gap: 0.8rem;
+    }
+
+    .table-footer-extra .counter-pill {
+      background: #ecf3fa;
+      padding: 0.4rem 1.2rem;
+      border-radius: 60px;
+      font-size: 0.85rem;
+      color: #1f3a57;
+      border: 1px solid #d3e0ed;
+    }
+
+    .table-footer-extra .counter-pill strong {
+      font-weight: 700;
+      background: #1f3a57;
+      color: white;
+      padding: 0.1rem 0.7rem;
+      border-radius: 40px;
+      margin-left: 0.3rem;
+    }
+
+    .action-hint {
+      font-size: 0.8rem;
+      color: #53738c;
+      background: rgba(255,255,255,0.6);
+      padding: 0.3rem 1rem;
+      border-radius: 60px;
+      border: 1px dashed #b7ccdf;
+    }
+
+    /* mobile */
+    @media (max-width: 600px) {
+      thead th, tbody td, tfoot td {
+        padding: 0.7rem 0.6rem;
+        font-size: 0.8rem;
+      }
+      .table-header h2 {
+        font-size: 1.6rem;
+      }
+      .table-header h2::before {
+        font-size: 1.6rem;
+      }
+      .table-header .book-badge {
+        font-size: 0.7rem;
+        padding: 0.2rem 0.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="catalog-card">
+    <!-- custom header instead of caption -->
+    <div class="table-header">
+      <h2>Book Catalog</h2>
+      <span class="book-badge">✦珍藏 · 5 classics</span>
+    </div>
+
+    <div class="table-wrap">
+      <table id="bookTable">
+        <!-- caption kept for semantics but hidden via css -->
+        <caption>Book Catalog</caption>
+        <thead>     
+          <tr>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Genre</th>
+            <th>Publication Year</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody">
+          <tr>
+            <td>Harry Potter</td>
+            <td>J. K. Rowling</td>
+            <td><span class="genre-badge genre-fiction">Fiction</span></td>
+            <td class="year-cell">1997</td>
+          </tr>
+          <tr>
+            <td>Lord of the Rings</td>
+            <td>Tolkien</td>
+            <td><span class="genre-badge genre-fantasy">Fantasy</span></td>
+            <td class="year-cell">1954</td>
+          </tr>
+          <tr>
+            <td>Narnia</td>
+            <td>C. S. Lewis</td>
+            <td><span class="genre-badge genre-fantasy">Fantasy</span></td>
+            <td class="year-cell">1950</td>
+          </tr>
+          <tr>
+            <td>Madame Bovary</td>
+            <td>Flaubert</td>
+            <td><span class="genre-badge genre-romance">Romance</span></td>
+            <td class="year-cell">1856</td>
+          </tr>
+          <tr>
+            <td>The Little Prince</td>
+            <td>Antoine de Saint-Exupéry</td>
+            <td><span class="genre-badge genre-fantasy">Fantasy</span></td>
+            <td class="year-cell">1943</td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="4">Total Books: <span id="bookCountDisplay">5</span></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <!-- extra footer with interactive info -->
+    <div class="table-footer-extra">
+      <span class="counter-pill">📖 <strong id="dynamicCount">5</strong> books in catalog</span>
+      <span class="action-hint">✨ hover rows · click to highlight</span>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      const table = document.getElementById('bookTable');
+      const tbody = document.getElementById('tableBody');
+      const dynamicCount = document.getElementById('dynamicCount');
+      const bookCountDisplay = document.getElementById('bookCountDisplay');
+
+      // function to update counters (if rows change)
+      function updateCounters() {
+        const rows = tbody.querySelectorAll('tr');
+        const count = rows.length;
+        if (dynamicCount) dynamicCount.textContent = count;
+        if (bookCountDisplay) bookCountDisplay.textContent = count;
+      }
+
+      // ---- row click: toggle highlight (portfolio interaction) ----
+      tbody.addEventListener('click', function(e) {
+        // find the closest row
+        const row = e.target.closest('tr');
+        if (!row) return;
+
+        // remove highlight from any other row
+        const allRows = tbody.querySelectorAll('tr');
+        allRows.forEach(r => r.classList.remove('row-highlight'));
+
+        // add highlight to clicked row
+        row.classList.add('row-highlight');
+      });
+
+      // ---- double click: remove highlight ----
+      tbody.addEventListener('dblclick', function(e) {
+        const row = e.target.closest('tr');
+        if (!row) return;
+        row.classList.remove('row-highlight');
+      });
+
+      // ---- optional: add a subtle "new" effect on first load? no, but we keep counters ----
+      updateCounters();
+
+      // ---- bonus: if you ever want to add a book dynamically (just for demo) ----
+      // but we keep it static; however we expose a small helper in console for fun.
+      console.log('✨ Book Catalog ready! Click a row to highlight, double-click to remove highlight.');
+
+      // ---- ensure total books in tfoot matches (already 5) ----
+      // also we can sync if someone uses devtools, but not needed.
+
+      // -------- EXTRA: add genre class to tbody cells for style (already inline) --------
+      // (we have span badges, all good)
+
+      // -------- tiny interaction: show row count on hover (optional) --------
+      // we already show it.
+
+      // Also ensure the total books in tfoot remains accurate after any theoretical change.
+      // but we don't modify rows dynamically, yet we keep the updater.
+
+      // If you want to demonstrate adding a row via console (just for portfolio fun):
+      window.addBook = function(title, author, genre, year) {
+        const row = document.createElement('tr');
+        const genreLower = genre ? genre.toLowerCase() : 'fiction';
+        let genreClass = 'genre-fiction';
+        if (genreLower.includes('fantasy')) genreClass = 'genre-fantasy';
+        else if (genreLower.includes('romance')) genreClass = 'genre-romance';
+        else if (genreLower.includes('fiction')) genreClass = 'genre-fiction';
+
+        row.innerHTML = `
+          <td>${title}</td>
+          <td>${author}</td>
+          <td><span class="genre-badge ${genreClass}">${genre}</span></td>
+          <td class="year-cell">${year}</td>
+        `;
+        tbody.appendChild(row);
+        updateCounters();
+        // remove any highlight from new row
+        row.classList.remove('row-highlight');
+      };
+
+      // expose for demo: console tip
+      console.log('💡 You can add a book: addBook("Dune", "Frank Herbert", "Sci-Fi", "1965")');
+    })();
+  </script>
+</body>
+</html>
